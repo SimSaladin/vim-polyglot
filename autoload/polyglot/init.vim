@@ -2765,7 +2765,7 @@ if !has_key(g:polyglot_is_disabled, 'sensible')
   set autoread
 
   " This is needed to avoid swapfile warning when auto-reloading
-  set shortmess+=A
+  "set shortmess+=A
 
   " Avoids swapfiles in current directory
   if &directory =~# '^\.,'
