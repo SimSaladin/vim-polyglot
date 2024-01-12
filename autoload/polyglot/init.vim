@@ -142,13 +142,6 @@ if exists('s:cpo_save')
   unlet s:cpo_save
 endif
 
-" Load user-defined filetype.vim and oter plugins ftdetect first
-" This is to use polyglot-defined ftdetect always as fallback to user settings
-augroup filetypedetect
-  runtime! filetype.vim
-  runtime! ftdetect/*.vim
-augroup END
-
 
 augroup filetypedetect
 
@@ -162,6 +155,13 @@ if !has_key(g:polyglot_is_disabled, 'ftdetect')
 if exists("did_load_filetypes")
   au! filetypedetect
 endif
+
+" Load user-defined filetype.vim and oter plugins ftdetect first
+" This is to use polyglot-defined ftdetect always as fallback to user settings
+augroup filetypedetect
+  runtime! filetype.vim
+  runtime! ftdetect/*.vim
+augroup END
 
 " Prevent filetype.vim of vim from loading again
 let did_load_filetypes = 1
