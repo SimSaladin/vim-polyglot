@@ -63,7 +63,9 @@ func! PolyglotVerify()
   endif
 endfun
 
-au VimEnter * call PolyglotVerify()
+augroup polyglot-verify
+  au! VimEnter * call PolyglotVerify()
+augroup END
 
 function! s:SetDefault(name, value)
   if !exists(a:name)
@@ -142,15 +144,6 @@ if exists('s:cpo_save')
   unlet s:cpo_save
 endif
 
-" Load user-defined filetype.vim and oter plugins ftdetect first
-" This is to use polyglot-defined ftdetect always as fallback to user settings
-augroup filetypedetect
-  runtime! filetype.vim
-  runtime! ftdetect/*.vim
-augroup END
-
-
-augroup filetypedetect
 
 " Switch to compatible mode for the time being
 let s:cpo_save = &cpo
@@ -159,13 +152,19 @@ set cpo&vim
 if !has_key(g:polyglot_is_disabled, 'ftdetect')
 
 " It can happen vim filetype.vim loads first, then we need a reset
-if exists("did_load_filetypes")
+if exists('did_load_filetypes')
+  unlet g:did_load_filetypes
   au! filetypedetect
 endif
 
-" Prevent filetype.vim of vim from loading again
-let did_load_filetypes = 1
+" Load user-defined filetype.vim and oter plugins ftdetect first
+" This is to use polyglot-defined ftdetect always as fallback to user settings
+"
+" NOTE: vim's filetype.vim (in 9.1 at least) does "augroup filetypedetect" and
+" also "runtime! ftdetect/*.vim" when did_load_filetypes is unset.
+runtime! filetype.vim
 
+augroup filetypedetect
 
 " DO NOT EDIT CODE BELOW, IT IS GENERATED WITH MAKEFILE
 
@@ -2722,6 +2721,8 @@ au BufNewFile,BufRead *.zut setf zimbutempl
 
 " DO NOT EDIT CODE ABOVE, IT IS GENERATED WITH MAKEFILE
 
+augroup END
+
 let s:detect_func = 'shebang#Detect'
 
 func! s:PolyglotObserve(fn)
@@ -2735,14 +2736,14 @@ func! s:Observe()
   augroup END
 endfunc
 
-au BufNewFile,BufRead,StdinReadPost,BufWritePost * if (&ft == "" || &ft == "conf") && expand("<afile>:e") == "" |
-  \ call polyglot#shebang#Detect() | endif
+augroup filetypedetect
+  au BufNewFile,BufRead,StdinReadPost,BufWritePost * if (&ft == "" || &ft == "conf") && expand("<afile>:e") == "" |
+    \ call polyglot#shebang#Detect() | endif
 
-au BufWinEnter * if &ft == "" && expand("<afile>:e") == "" |
-  \ call s:Observe() | endif
+  au BufWinEnter * if &ft == "" && expand("<afile>:e") == "" |
+    \ call s:Observe() | endif
 
-au BufWritePost * au! polyglot-observer
-
+  au BufWritePost * au! polyglot-observer
 augroup END
 
 endif
